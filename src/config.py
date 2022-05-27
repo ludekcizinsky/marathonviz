@@ -1,0 +1,3 @@
+RERESH_TOKEN = ''
+CLIENT_SECRET = ''
+CLIENT_ID = ''
