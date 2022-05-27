@@ -129,9 +129,10 @@ dmypy.json
 .pyre/
 
 # Data
-src/data/raw/activities/*.csv
-src/data/raw/activities/*.gpx
+src/data/raw/activities_detail/*.json
+src/data/raw/activities_zones/*.json
+src/data/raw/activities_list/*.json
 src/data/processed/*.csv
 
 # Config file
-src/config.py
+src/utils/config.py
