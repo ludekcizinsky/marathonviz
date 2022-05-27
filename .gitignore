@@ -131,3 +131,4 @@ dmypy.json
 # Data
 src/data/raw/activities/*.csv
 src/data/raw/activities/*.gpx
+src/data/processed/*.csv
