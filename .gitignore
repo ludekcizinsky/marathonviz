@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Data
+src/data/raw/activities/*.csv
+src/data/raw/activities/*.gpx
