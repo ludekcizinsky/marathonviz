@@ -132,3 +132,6 @@ dmypy.json
 src/data/raw/activities/*.csv
 src/data/raw/activities/*.gpx
 src/data/processed/*.csv
+
+# Config file
+src/config.py
