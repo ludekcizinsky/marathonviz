@@ -1,43 +1,86 @@
-import gpxpy
-import glob
 import pandas as pd
-from tqdm import tqdm
+import polyline
+import json
+from haversine import haversine, Unit
 
-def gpx_to_df(folderpath):
 
-  """
-  Code adapted from:
-  https://github.com/nidhaloff/gpx-converter/blob/master/gpx_converter/base.py
-  """
+def get_map_data():
   
-  # Get all runs
-  all_runs_files = glob.glob(folderpath + '/*.gpx')
+  # Load marathon json
+  with open('data/raw/activities_detail/7146109879.json') as f:
+    dd = json.load(f)
+    data = polyline.decode(dd['map']['polyline'])
+  
+  # Add distance between coordinates
+  df = pd.DataFrame(data, columns =['Lat', 'Lon'])
+  p0 = None
+  distance = []
+  for row in df[['Lat', 'Lon']].iterrows():
+      if p0 is not None:
+          p1 = row[1]
+          distance.append(distance[-1] + haversine(p0, p1, unit=Unit.KILOMETERS))
+          p0 = p1
+      else:
+          p0 = row[1]
+          distance.append(0)
+  df['distance'] = distance
+  df['distance [m]'] = df['distance']*1000
+  
+  # Approximate where each kilemeter was
+  exact_distance = [i for i in range(1, 44)]
+  i = 0
+  current = exact_distance[i]
+  reduced_data = []
+  for row in df[['Lat', 'Lon', 'distance']].iterrows():
+      lat, lot, d = row[1]
+      if abs(d - current) < 0.04:
+          reduced_data.append((lat, lot, current, d,))
+          i += 1
+          current = exact_distance[i]
 
-  # Save everything to pandas dataframe
-  df = pd.DataFrame(columns=['RunId', 'Time', 'Lon', 'Lat', 'Altitude'])
-    
-  for file in tqdm(all_runs_files, desc='Gpx runs info to datframe'):
-
-    # Save all needed attributes
-    longs, lats, times, alts = [], [], [], []
-
-    with open(file, 'r') as gpxfile:
-        gpx = gpxpy.parse(gpxfile)
-        for run in gpx.tracks:
-            for segment in run.segments:
-                for point in segment.points:
-                    lats.append(point.latitude)
-                    longs.append(point.longitude)
-                    times.append(point.time)
-                    alts.append(point.elevation)
-
-    # Save it as df
-    runids = [file.split('/')[-1][:-4]]*len(longs)
-    data = {'RunId': runids, 'Lon': longs, 'Lat': lats, 'Time': times, 'Altitude': alts}
-    run_df = pd.DataFrame.from_dict(data)
-    
-    # Append to global df
-    df = pd.concat([df, run_df], ignore_index=True)
+  reduced_df = pd.DataFrame(reduced_data, columns =['Lat', 'Lon', 'Exact Distance', 'Distance'])
+  
+  # Get more detailed info about each km
+  splits = pd.DataFrame(dd['splits_metric'])
+  splits['Exact Distance'] =  splits['split']
+  merged = reduced_df.merge(splits, how='inner', on='Exact Distance')
+  merged['Time [s]'] = merged['elapsed_time'].cumsum()
+  merged['Time [min]'] = merged['Time [s]'].apply(lambda x: x/60)
  
-  return df
+  # Create a mapping from a minute to pace
+  minutes = [i for i in range(1, 225)]
+  min_to_pace = dict()
+  for m in minutes:
+      for row in merged[['Time [min]', 'elapsed_time']].iterrows():
+          t, pace_s = row[1]
+          if m <= t:
+              min_to_pace[m] = pace_s
+              break
+  
+  # Create a mapping from minute in race to distance
+  minutes_distance = None
+  for m in minutes:
+      pace = min_to_pace.get(m)
+      if pace is not None:
+          meters_per_sec = 1000/pace
+          if minutes_distance is None:
+              minutes_distance = [meters_per_sec*60]
+          else:
+              minutes_distance.append(minutes_distance[-1] + meters_per_sec*60)
+      else:
+          break
+  
+  # Create a mapping from distance to location on map
+  dm_to_loc = dict()
+  for dm in minutes_distance:
+      options = []
+      for row in df[['Lat', 'Lon', 'distance [m]']].iterrows():
+          lat, lot, dm2 = row[1]
+          diff = abs(dm - dm2)
+          if diff < 75:
+              options.append((diff, lat, lot,))
+      best = sorted(options, key=lambda x: x[0], reverse=False)[0]
+      dm_to_loc[dm] = (best[1], best[2],)
+
+  return df, reduced_df, minutes_distance, dm_to_loc
 

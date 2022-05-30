@@ -2,7 +2,8 @@ import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from .config import CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN
-
+from datetime import datetime
+import json
 
 def _get_access_token():
   """
@@ -68,4 +69,25 @@ def get_zones_info(activity_id):
   zones = requests.get(url, headers=header).json()
 
   return zones
+
+def fetch_marathon_data():
+
+  # All marathon activities
+  after = datetime.strptime('2022-02-27', '%Y-%m-%d').timestamp()
+  before = datetime.strptime('2022-05-16', '%Y-%m-%d').timestamp()
+  activities = list_activities(after, before)
+  with open("data/raw/activities_list/marathon_runs_list.json", "w") as f:
+    json.dump(activities, f)
+
+  # All activities details
+  for activity in activities:
+    activity_id = activity['id']
+
+    activity_detail = get_activity_info(activity_id)
+    with open(f"data/raw/activities_detail/{activity_id}.json", "w") as f:
+      json.dump(activity_detail, f)
+
+    zone_info = get_zones_info(activity_id)
+    with open(f"data/raw/activities_zones/{activity_id}.json", "w") as f:
+      json.dump(zone_info, f)
 
