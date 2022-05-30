@@ -15,5 +15,9 @@ jobs:
           username: ${{secrets.SSH_USER}} # User of the server you want to ssh into
      
           script: |  
-            git clone git@github.com:LudekCizinsky/marathonviz.git 
+            rm -r -f marathonviz 
+            git clone git@github.com:LudekCizinsky/marathonviz.git
+            source marathonviz/bin/activate
+            pip install marathonviz/requirements.txt
+            deactivate
             echo 'Deployment successful to digital ocean' 
