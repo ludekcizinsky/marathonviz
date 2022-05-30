@@ -64,9 +64,9 @@ def get_map_data():
       if pace is not None:
           meters_per_sec = 1000/pace
           if minutes_distance is None:
-              minutes_distance = [meters_per_sec*60]
+              minutes_distance = [round(meters_per_sec*60, 2)]
           else:
-              minutes_distance.append(minutes_distance[-1] + meters_per_sec*60)
+              minutes_distance.append(minutes_distance[-1] + round(meters_per_sec*60, 2))
       else:
           break
   
@@ -81,6 +81,12 @@ def get_map_data():
               options.append((diff, lat, lot,))
       best = sorted(options, key=lambda x: x[0], reverse=False)[0]
       dm_to_loc[dm] = (best[1], best[2],)
-
-  return df, reduced_df, minutes_distance, dm_to_loc
+  
+  # Save the data
+  df.to_csv('data/processed/df.csv', index=False)
+  reduced_df.to_csv('data/processed/reduced_df.csv' , index=False)
+  with open('data/processed/minutes_distance.csv', 'w') as f:
+    f.write(",".join([str(m) for m in minutes_distance]))
+  with open('data/processed/dm_to_loc.json', 'w') as f:
+    json.dump(dm_to_loc, f) 
 

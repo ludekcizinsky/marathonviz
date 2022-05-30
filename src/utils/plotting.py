@@ -1,13 +1,24 @@
 from .config import MAPBOX_TOKEN
 import plotly.graph_objects as go
+import pandas as pd
+import json
 
 
-def get_race_plot(df, reduced_df, minutes_distance, dm_to_loc):
+def get_race_plot():
 
   """
   The code inspired from:
   https://plotly.com/python/animations/
   """
+  
+  # Load the data
+  df = pd.read_csv('data/processed/df.csv')
+  reduced_df = pd.read_csv('data/processed/reduced_df.csv')
+  with open('data/processed/minutes_distance.csv') as f:
+    minutes_distance = [float(d) for d in f.read().strip().split(',')]
+  with open('data/processed/dm_to_loc.json') as f:
+    dm_to_loc = json.load(f)
+
 
   # ---------- Initial figure layout setup section
   # Define figure 
