@@ -1,7 +1,6 @@
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
-from pages import page1, page2
-
+from pages import race, training
 
 
 # ------ Initialize dash app
@@ -30,6 +29,24 @@ index_page = html.Div([
 ])
 
 
+footer = html.Footer(
+    [
+      html.Div(
+        [
+          html.Span(
+            [
+              "Created by Ludek Cizinsky."
+            ],
+            className='text-muted'
+          )
+        ],
+      className="container"
+      ) 
+    ],
+    className="footer"
+)
+
+
 app.layout = html.Div(
     [
         dcc.Location(id="url"),
@@ -42,9 +59,11 @@ app.layout = html.Div(
             brand="Marathonviz",
             color="#2a2b2b",
             dark=True,
+            className='py-1'
         ),
-        dbc.Container(id="page-content", className="pt-4"),
-    ]
+        dbc.Container(id="page-content")
+    ],
+    style={"height": "100vh"}
 )
 
 
@@ -53,9 +72,9 @@ app.layout = html.Div(
           Input('url', 'pathname'))
 def display_page(pathname):
     if pathname == '/race':
-        return page1.layout
+        return race.layout
     elif pathname == '/training':
-        return page2.layout
+        return training.layout
     else:
         return index_page
 

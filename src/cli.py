@@ -1,5 +1,5 @@
 import argparse
-from utils import fetch_marathon_data, get_map_data
+from utils import fetch_marathon_data, preprocess_marathon
 
 
 parser = argparse.ArgumentParser(
@@ -26,7 +26,8 @@ args = parser.parse_args()
 def main():
 
   if args.preprocess:
-    get_map_data()
+    preprocess_marathon()
 
 if __name__ == '__main__':
   main()
+
