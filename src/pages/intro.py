@@ -4,7 +4,13 @@ import dash_bootstrap_components as dbc
 text = dcc.Markdown(
     '''
     ## About
-    This is the training page.
+    Marathonviz's goal is to give you an idea what is like to run marathon as
+    well as practice for it.
+
+    ## Sections
+    This website includes following sections:
+    - [Marathon run](/race)
+    - [Marathon training](/training)
     '''
 )
 

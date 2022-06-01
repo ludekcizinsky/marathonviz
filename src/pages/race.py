@@ -39,12 +39,50 @@ track = go.Scattermapbox(
 
 # --------- Page layout
 
+# Instructions
+instructions = dbc.Row(
+    [
+    dbc.Col(
+      html.Div("Use the slider below to navigate through the whole marathon experience."),
+      width=12, className='h-100 text-light', style={'text-align': 'center'})
+    ],
+    className='h-10 pb-2',
+    justify='center'
+)
+
+# Slider control
+marks = {i: {'label': f'{i} km'} for i in range(0, 43, 6)}
+marks[42] = {'label': '42 km', 'style': {'text-indent':'-3.02em'}}
+marks[0] = {'label': '0 km', 'style': {'text-indent':'1.95em'}}
+slider = dbc.Row(
+    [
+    dbc.Col(
+      [
+        dcc.Slider(
+          0,
+          42,
+          step=6,
+          value=0,
+          marks=marks,
+          tooltip=None,
+          id='km-slider',
+          className='h-100'
+          )
+      ],
+      className='h-100',
+      width=12
+    )
+    ],
+    justify='center',
+    className='h-25'
+)
+
 # First row of graphs
 row1 = dbc.Row(
     children=[
         dbc.Col(
             width=6,
-            children=[dcc.Graph(id="hb-overview", className="h-100")],
+            children=[instructions, slider],
             className="h-100",
         ),
         dbc.Col(
@@ -53,7 +91,7 @@ row1 = dbc.Row(
             className="h-100",
         ),
     ],
-    className="h-20",
+    className="h-50 py-2",
 )
 
 
@@ -71,103 +109,11 @@ row2 = dbc.Row(
             className="h-100",
         ),
     ],
-    className="h-80",
+    className="h-50 pt-2 pb-4",
 )
 
 
-layout = dbc.Container([row1, row2], className="vh-100", fluid=True)
-
-
-
-
-
-
-
-
-
-
-
-
-layout2 = dbc.Container([
-  
-  # Row section 2
-  dbc.Row([
-
-    # Col 1
-    dbc.Col([
-      
-      # Slider control
-      dbc.Row(
-        [
-          dcc.Markdown(
-            """
-            Use the slider below to navigate through the whole
-            marathon experience.
-            """
-          ),
-          dcc.Slider(
-            0,
-            42,
-            step=6,
-            value=0,
-            marks=None,
-            tooltip={"placement": "bottom", "always_visible": True},
-            id='km-slider'
-          )
-        ]
-      ),
-
-      # Marathon description
-      dbc.Row([
-        dcc.Markdown(
-        """
-        The race was packed, but first three kilometers go very fast
-        """,
-        id='race-description'
-        )
-      ])
-
-    ]),
-
-    # Col 2
-    dbc.Col([
-        dcc.Graph(id='pace-overview', style={"height": "100%"})
-    ],
-    style={"height": "100%"}
-    ),
-
-  ],
-  align="start",
-  className='py-2 my-2 h-70'
-  ),
-   
- 
-  # Row section 2
-  dbc.Row(
-    [
-    
-      # Col 1
-      dbc.Col([
-        dcc.Graph(id='hb-overview', style={"height": "80%"})
-      ],
-      style={"height": "100%"}
-      ),
-      
-      # Col 2
-      dbc.Col([
-        dcc.Graph(id='map', style={"height": "80%"})
-      ],
-      style={"height": "100%"}
-      )
-
-    ],
-    className='py-2 my-2 h-20'
-  )
-
-],
-style={"height": "100%"}
-) # Container end
-
+layout = dbc.Container([row1, row2], className="h-100")
 
 # -------- Callbacks
 @callback([
@@ -227,30 +173,29 @@ def update_visuals(selected_km):
   # Pace
   pace_fig = go.Figure()
   pace_fig.update_layout(
-    yaxis=dict(autorange='reversed', color='white', title='Pace per km (min)'),
-    xaxis=dict(color='white', title='# of km'),
+    yaxis=dict(autorange='reversed', color='white', title='Pace per km (min)', automargin=True),
+    xaxis=dict(color='white', title='# of km', automargin=True),
     paper_bgcolor=section_bg,
     plot_bgcolor=section_bg,
     margin=dict(l=0.05, r=0.05, t=0.05, b=0.05),
-    template='plotly_dark',
-    
+    template='plotly_dark' 
   )
-  pace_fig.add_vrect(x0=selected_km-6, x1=selected_km, annotation_text='',
+  pace_fig.add_vrect(x0=0, x1=selected_km, annotation_text='',
                 fillcolor="#f54142", opacity=0.25, line_width=0)
   pace_fig.add_trace(pace)
 
   # Heartbeat
   hb_fig = go.Figure()
   hb_fig.update_layout(
-    yaxis=dict(color='white', title='Average heartbeat per kilometer'),
-    xaxis=dict(color='white', title='# of km'),
+    yaxis=dict(color='white', title='Average heartbeat per kilometer', automargin=True),
+    xaxis=dict(color='white', title='# of km', automargin=True),
     paper_bgcolor=section_bg,
     plot_bgcolor=section_bg,
-    margin=dict(l=0.05, r=0.05, t=0.05, b=0.05),
+    margin=dict(l=0.15, r=0.05, t=0.05, b=0.05),
     template='plotly_dark',
     
   )
-  hb_fig.add_vrect(x0=selected_km-6, x1=selected_km, annotation_text='',
+  hb_fig.add_vrect(x0=0, x1=selected_km, annotation_text='',
                 fillcolor="#f54142", opacity=0.25, line_width=0,
                 )
   hb_fig.add_trace(hb)
