@@ -29,42 +29,124 @@ index_page = html.Div([
 ])
 
 
-footer = html.Footer(
-    [
-      html.Div(
-        [
-          html.Span(
-            [
-              "Created by Ludek Cizinsky."
-            ],
-            className='text-muted'
-          )
-        ],
-      className="container"
-      ) 
+
+
+# Navbar
+navbar = dbc.NavbarSimple(
+      children=[
+          dbc.NavLink("Intro", href="/", active="exact", className="h-100"),
+          dbc.NavLink("Race", href="/race", active="exact", className="h-100"),
+          dbc.NavLink("Training", href="/training", active="exact", className="h-100"),
+      ],
+      brand="Marathonviz",
+      color="#2a2b2b",
+      dark=True,
+      className='h-100'
+)
+
+# First row of graphs
+header = dbc.Row(
+    children=[
+      dbc.Col(
+            width=12,
+            children=[navbar],
+            className="h-100"
+      )
     ],
-    className="footer"
+    className="h-10"
 )
 
 
-app.layout = html.Div(
-    [
-        dcc.Location(id="url"),
-        dbc.NavbarSimple(
-            children=[
-                dbc.NavLink("Intro", href="/", active="exact"),
-                dbc.NavLink("Race", href="/race", active="exact"),
-                dbc.NavLink("Training", href="/training", active="exact"),
-            ],
-            brand="Marathonviz",
-            color="#2a2b2b",
-            dark=True,
-            className='py-1'
+row0 = dbc.Row(
+    children=[
+      dbc.Col(
+            width=1,
+            children=[dbc.NavLink("Intro", href="/", active="exact", className="h-100")],
+            className="h-100"
+      ),
+      dbc.Col(
+            width=1,
+            children=[dbc.NavLink("training", href="/training", active="exact", className="h-100")],
+            className="h-100"
+      )
+    ],
+    className="h-5",
+    justify="end"
+)
+
+row0 = dbc.Row(
+    children=[
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="hb1-overview", className="h-100")],
+            className="h-100",
         ),
-        dbc.Container(id="page-content")
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="map1", className="h-100")],
+            className="h-100",
+        ),
     ],
-    style={"height": "100vh"}
+    className="h-25",
 )
+
+
+# Second row of graphs
+row2 = dbc.Row(
+    children=[
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="hb-overview", className="h-100")],
+            className="h-100",
+        ),
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="map", className="h-100")],
+            className="h-100",
+        ),
+    ],
+    className="h-40 py-2",
+)
+
+# Third row
+row3 = dbc.Row(
+    children=[
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="hb3-overview", className="h-100")],
+            className="h-100",
+        ),
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="map3", className="h-100")],
+            className="h-100",
+        ),
+    ],
+    className="h-50 py-2",
+)
+
+content = dbc.Container(id='page-content', className='h-90')
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.layout = dbc.Container([header, row2, row3], className="vh-100", fluid=False)
+
+
+
+
+
+
+
 
 
 # ------- Main handler

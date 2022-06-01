@@ -38,7 +38,57 @@ track = go.Scattermapbox(
 
 
 # --------- Page layout
-layout = dbc.Container([
+
+# First row of graphs
+row1 = dbc.Row(
+    children=[
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="hb-overview", className="h-100")],
+            className="h-100",
+        ),
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="pace-overview", className="h-100")],
+            className="h-100",
+        ),
+    ],
+    className="h-20",
+)
+
+
+# Second row of graphs
+row2 = dbc.Row(
+    children=[
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="hb-overview", className="h-100")],
+            className="h-100",
+        ),
+        dbc.Col(
+            width=6,
+            children=[dcc.Graph(id="map", className="h-100")],
+            className="h-100",
+        ),
+    ],
+    className="h-80",
+)
+
+
+layout = dbc.Container([row1, row2], className="vh-100", fluid=True)
+
+
+
+
+
+
+
+
+
+
+
+
+layout2 = dbc.Container([
   
   # Row section 2
   dbc.Row([
