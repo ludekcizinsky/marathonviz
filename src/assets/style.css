@@ -1,3 +1,9 @@
+.custom-img {
+    height: auto; 
+    width: auto; 
+    max-height: 500px;
+}
+
 .rc-slider-track {
   background-color: #636efa;
 }

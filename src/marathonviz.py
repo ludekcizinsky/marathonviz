@@ -1,15 +1,15 @@
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
-from pages import race, training, intro
+from pages import about, race
 
 # Header
 navbar = dbc.NavbarSimple(
       children=[
-          dbc.NavLink("Intro", href="/", active="exact", className="h-100"),
-          dbc.NavLink("Race", href="/race", active="exact", className="h-100"),
-          dbc.NavLink("Training", href="/training", active="exact", className="h-100"),
+          dbc.NavLink("About", href="/", active="exact", className="h-100"),
+          dbc.NavLink("Race", href="/race", active="exact", className="h-100")
       ],
       brand="🏃 Marathonviz",
+      brand_href='/',
       brand_style={'color': '#c9c9c9', 'font-weight': 'bold', 'font-family': "Poppins"},
       className='h-100 navbar-dark',
       color="#191a1a"
@@ -47,10 +47,8 @@ app.layout = dbc.Container([header, content], className="vh-100", fluid=True)
 def display_page(pathname):
     if pathname == '/race':
         return race.layout
-    elif pathname == '/training':
-        return training.layout
     else:
-        return intro.layout
+        return about.layout
 
 if __name__ == '__main__':
     app.run_server(debug=True)
