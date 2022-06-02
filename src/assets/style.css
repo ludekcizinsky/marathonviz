@@ -1,3 +1,6 @@
+/* 
+ * Responsive text
+*/
 @media screen and (min-height: 769px) {
   .responsive-text {
     font-size: medium;
@@ -43,8 +46,11 @@
   }
 }
 
+/*
+ * Slider custom default
+*/
 .rc-slider-track {
-  background-color: #636efa;
+  background-color: #292c4f;
 }
 
 .rc-slider-dot-active {  
@@ -65,3 +71,26 @@
   border-color: #636efa;
 }
 
+/*
+ * Slider easy
+*/
+
+.rc-slider-dot-active.slider-easy {
+  border: solid 1px #48e090;
+  background-color: #48e090;
+
+}
+
+.rc-slider-handle.slider-easy {
+  background-color: #48e090;
+  border-color: #48e090;
+}
+
+.rc-slider-handle:hover.slider-easy {
+  border-color: #48e090;
+}
+
+.rc-slider-handle-active:active.slider-easy {
+  background-color: #48e090;
+  border-color: #48e090;
+}

@@ -21,6 +21,7 @@ config={'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'toImage',
 easy = '#48e090'
 middle = '#fce26c'
 hard = '#f67c7c'
+umark = '#999999'
 
 # Main colors
 primary = '#636efa'
@@ -56,7 +57,9 @@ target_pace = go.Scatter(
 hb = go.Scatter(
     x = merged['Exact Distance'],
     y = merged['average_heartrate'],
-    mode='lines+markers'
+    mode='lines+markers',
+    showlegend=False,
+    name='Actual heartbeat'
 )
 
 # Map
@@ -83,9 +86,9 @@ instructions = dbc.Row(
 )
 
 # Slider control
-marks = {i: {'label': f'{i} km'} for i in range(0, 43, 6)}
+marks = {i: {'label': f'{i} km', 'style': dict(color=umark)} for i in range(0, 43, 6)}
 marks[42] = {'label': '42 km', 'style': {'text-indent':'-3.02em'}}
-marks[0] = {'label': '0 km', 'style': {'text-indent':'1.95em'}}
+marks[0] = {'label': '0 km', 'style': {'text-indent':'1.95em', 'color': easy}}
 slider = dbc.Row(
     [
     dbc.Col(
@@ -102,7 +105,8 @@ slider = dbc.Row(
           )
       ],
       className='h-100',
-      width=12
+      width=12,
+      id='slider-holder'
     )
     ],
     justify='center',
@@ -115,7 +119,7 @@ badges = html.Div(html.Span(
     [
         html.Span("Feeling good", className="badge responsive-badges me-2 text-muted", style={'background-color': easy}),
         html.Span("Can barely talk", className="badge responsive-badges me-2 text-muted", style={'background-color': middle}),
-        html.Span("Hard", className="badge responsive-badges me-2 text-muted", style={'background-color': hard})
+        html.Span("Hurting", className="badge responsive-badges me-2 text-muted", style={'background-color': hard})
     ]
   ),
   className='text-center'
@@ -188,6 +192,7 @@ layout = dbc.Container([row1, row2], className="h-90")
 
 # -------- Callbacks
 @callback([
+    Output('km-slider', 'marks'),
     Output('description-content', 'children'),
     Output('hb-overview', 'figure'),
     Output('pace-overview', 'figure'),
@@ -196,7 +201,7 @@ layout = dbc.Container([row1, row2], className="h-90")
 def update_visuals(selected_km):
 
   # Global vars
-  section_bg = 'rgba(22,22,23,1)'
+  section_bg = '#141515'
   
   # Overall progress
   final_color = None
@@ -275,7 +280,7 @@ def update_visuals(selected_km):
 
     final_color = hard
     traces = [t1, t2, t3]
- 
+
   # Particular position
   runner_position = go.Scattermapbox(
       mode = "markers",
@@ -313,11 +318,11 @@ def update_visuals(selected_km):
   pace_fig.update_layout(
       yaxis=dict(autorange='reversed', color='white', title='Pace per km (min:sec)',
                automargin=True, minor=dict(ticks="inside", showgrid=True), showgrid=True),
-    xaxis=dict(color='white', title='# of km', automargin=True,
+    xaxis=dict(color='white', title='km', automargin=True,
                tickmode= 'linear', tick0 = 0, dtick = 6, range=[0, 42]),
     paper_bgcolor=section_bg,
     plot_bgcolor=section_bg,
-    margin=dict(l=0.05, r=0.05, t=0.05, b=0.05),
+    margin=dict(l=90, r=20, t=20, b=20),
     template='plotly_dark',
     yaxis_tickformat = '%M:%S'
   )
@@ -334,16 +339,89 @@ def update_visuals(selected_km):
             font=dict(color='#737373')
             )
 
+  if selected_km <= 24:
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=easy)
+    )
+    pace_fig.add_trace(p24)
+
+  elif selected_km <= 36 and selected_km > 24:
+
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=easy)
+    )
+    pace_fig.add_trace(p24)
+
+    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    p36 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=middle)
+    )
+    pace_fig.add_trace(p36)
+
+  else:
+
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=easy)
+    )
+    pace_fig.add_trace(p24)
+
+    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    p36 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=middle)
+    )
+    pace_fig.add_trace(p36)
+
+    mask = (merged['Exact Distance'] >= 36)
+    p42 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['time [s]'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual pace',
+        line=dict(color=hard)
+    )
+    pace_fig.add_trace(p42)
+
+
+
   # Heartbeat
   hb_fig = go.Figure()
   hb_fig.update_layout(
-    yaxis=dict(color='white', title='Average heartbeat per kilometer',
+    yaxis=dict(color='white', title='Avg heartbeat per km',
                automargin=True, minor=dict(ticks="inside", showgrid=True), showgrid=True),
-    xaxis=dict(color='white', title='# of km', automargin=True,
+    xaxis=dict(color='white', title='km', automargin=True,
                tickmode= 'linear', tick0 = 0, dtick = 6, range=[0, 42]),
     paper_bgcolor=section_bg,
     plot_bgcolor=section_bg,
-    margin=dict(l=0.15, r=0.05, t=0.05, b=0.05),
+    margin=dict(l=90, r=20, t=20, b=20),
     template='plotly_dark',
     
   )
@@ -354,6 +432,85 @@ def update_visuals(selected_km):
                 fillcolor="#636efa", opacity=0.25, line_width=0,
                 )
   hb_fig.add_trace(hb)
+
+  hb_fig.add_hline(y=160, line=dict(color='#5c5b5b'))
+  hb_fig.add_annotation(x=30, y=160,
+            text="Optimal heartbeat",
+            showarrow=False,
+            yshift=-12,
+            font=dict(color='#737373')
+            )
+
+  if selected_km <= 24:
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual heartbeat',
+        line=dict(color=easy)
+    )
+    hb_fig.add_trace(p24)
+
+  elif selected_km <= 36 and selected_km > 24:
+
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual heartbeat',
+        line=dict(color=easy)
+    )
+    hb_fig.add_trace(p24)
+
+    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    p36 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual heartbeat',
+        line=dict(color=middle)
+    )
+    hb_fig.add_trace(p36)
+
+  else:
+
+    mask = merged['Exact Distance'] <= selected_km
+    p24 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual heartbeat',
+        line=dict(color=easy)
+    )
+    hb_fig.add_trace(p24)
+
+    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    p36 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual heartbeat',
+        line=dict(color=middle)
+    )
+    hb_fig.add_trace(p36)
+
+    mask = (merged['Exact Distance'] >= 36)
+    p42 = go.Scatter(
+        x = merged[mask]['Exact Distance'],
+        y = merged[mask]['average_heartrate'],
+        mode='lines+markers',
+        showlegend=False,
+        name='Actual hearbeat',
+        line=dict(color=hard)
+    )
+    hb_fig.add_trace(p42)
 
   # Description
   detail_style = 'fw-normal responsive-text'
@@ -375,8 +532,7 @@ def update_visuals(selected_km):
     I ate oat-meal which is recommended since it is easy to process for the
     body. I arrive at the Islands Brygge at around 8.30 - one hour before the
     race starts. Fast forward 45 minutes, I am warmed up, stretched and ready
-    to tackle the race. My initial plan is to start at a pace around five
-    minutes and 30s per kilometer.
+    to tackle the race.
     """
     detail = html.Div(text, style={'text-align': 'justify'}, className=detail_style)
     desc = html.Div([title, detail])
@@ -396,13 +552,13 @@ def update_visuals(selected_km):
     text1 = """
     The race was packed which has its pros and cons. The
     biggest pro is the motivation that you get from running
-    next to other runners.In addition, I also ran faster than I initially planned.
-    I planned to run around 5.30 min/km but I sped up to
+    next to the other runners. This also led me to ran faster than I initially
+    planned. (5.30 min/km) I sped up to
     """
     text2 = html.Span('5.10 min/km', style={'color': '#636efa', 'font-weight': 'bold'})
     
     text3 = """
-    Yet, my heartrate was about
+    , yet, my heartrate was about
     """
     text4 = html.Span('150 BPM', style={'color': '#636efa', 'font-weight': 'bold'})
     text5 = """
@@ -460,9 +616,8 @@ def update_visuals(selected_km):
     . These runners are like your guides through the run, you can simply follow
     them and will reach the needed time. Apart from keeping track of my pace,
     I also had to make sure that I stay hydrated and refill needed nutritions.
-    The latter part was ensured by my girlfriend who had to travel on bike
-    throughout the Copenhagen and give me my gels. Looking back, this
-    was a bad idea and I should have just carried the gels with me.
+    As a general rule, at each refreshing station I drank water and had 2 gels
+    per hour.
     """
 
     detail = html.Div([text1, text2, text3], style={'text-align': 'justify'},
@@ -483,8 +638,8 @@ def update_visuals(selected_km):
     # Detail
     text1 = """
     I finally hit the half-marathon mark which felt awesome, almost like I am
-    very close to the end. This led me to unconsciously speed up. At the highest
-    I hit 
+    very close to the end. This led me to unconsciously speed up. At the
+    highest, I hit 
     """
     text2 = html.Span('4.34 min/km', style={'color': primary, 'font-weight': 'bold'})
     text3 = """
@@ -492,8 +647,7 @@ def update_visuals(selected_km):
     seen from my heart beat which climbed up to 
     """
     text4 = html.Span('170 BMP', style={'color': primary, 'font-weight': 'bold'})
-    text5 = """
-    . Although I knew all of this I kept going at this pace.
+    text5 = """.
     """
 
     detail = html.Div([text1, text2, text3, text4, text5], style={'text-align':
@@ -564,15 +718,26 @@ def update_visuals(selected_km):
     I knew that it is going to be over soon, but each kilometer left seemed
     very painful. Even stopping at refreshing station did not help. At 41st
     km I hit the wall. This is a moment where one's body simply rejects to run.
-    I walked for 50 m until I started running again. What helped me the most
-    mentally was the fact of knowing the exact path I have to run to get to
-    finish. I finished in 3 hours, 34 minutes and 48 seconds.
+    I walked for 50 m until I started running again. I finished in
+    3 hours, 34 minutes and 48 seconds which is better than my initial plan (3:40:00).
+    So afterall, it was the right bet to go faster!
     """
 
     detail = html.Div([text1], style={'text-align': 'justify'},
         className=detail_style)
     desc = html.Div([title, detail])
-
   
-  return desc, hb_fig, pace_fig, map_fig
+  # Update marks
+  for km, info in marks.items():
+    if km <= selected_km:
+      if km <= 24:
+        marks[km]['style']['color'] = easy
+      elif km <= 36:
+        marks[km]['style']['color'] = middle
+      else:
+        marks[km]['style']['color'] = hard
+    else:
+      marks[km]['style']['color'] = umark
+  
+  return marks, desc, hb_fig, pace_fig, map_fig
 
