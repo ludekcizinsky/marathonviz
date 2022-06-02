@@ -25,6 +25,7 @@ hard = '#f67c7c'
 # Main colors
 primary = '#636efa'
 
+
 # --------- Define initial figures
 merged['time [s]'] = pd.to_timedelta(merged['elapsed_time'], unit='s')
 merged['time [s]'] = merged['time [s]'] + pd.to_datetime('1970/01/01')
@@ -77,7 +78,7 @@ instructions = dbc.Row(
       html.Div("Use the slider below to navigate through the whole marathon experience."),
       width=12, className='h-100 text-light slider-desc', style={'text-align': 'center'})
     ],
-    className='h-10 pb-2',
+    className='h-10 mb-2',
     justify='center'
 )
 
@@ -105,9 +106,34 @@ slider = dbc.Row(
     )
     ],
     justify='center',
-    className='h-20 pb-5'
+    className='h-10 mt-2 mb-3',
+    align='center'
 )
 
+# Color explanation
+badges = html.Div(html.Span(
+    [
+        html.Span("Feeling good", className="badge responsive-badges me-2 text-muted", style={'background-color': easy}),
+        html.Span("Can barely talk", className="badge responsive-badges me-2 text-muted", style={'background-color': middle}),
+        html.Span("Hard", className="badge responsive-badges me-2 text-muted", style={'background-color': hard})
+    ]
+  ),
+  className='text-center'
+)
+
+color_info = dbc.Row(
+    [
+      dbc.Col(
+      [badges],
+      className='h-100',
+      width = 12
+      ) 
+
+    ],
+    className='h-10 my-2',
+    align='center',
+    justify='center'
+)
 
 # Description of the phase
 description = dbc.Row(
@@ -124,7 +150,7 @@ row1 = dbc.Row(
     children=[
         dbc.Col(
             width=6,
-            children=[instructions, slider, description],
+            children=[instructions, slider, color_info, description],
             className="h-100",
         ),
         dbc.Col(
@@ -154,11 +180,11 @@ row2 = dbc.Row(
             className="h-100",
         ),
     ],
-    className="h-50 pt-2 pb-4",
+    className="h-50 pt-2",
 )
 
 
-layout = dbc.Container([row1, row2], className="h-100")
+layout = dbc.Container([row1, row2], className="h-90")
 
 # -------- Callbacks
 @callback([
@@ -330,12 +356,16 @@ def update_visuals(selected_km):
   hb_fig.add_trace(hb)
 
   # Description
-  detail_style = 'fw-normal lh-large responsive-text'
-  title_style = 'fw-bold fs-5'
+  detail_style = 'fw-normal responsive-text'
+  title_style = 'fw-bold responsive-title pb-2'
   if selected_km == 0: 
 
     # Title
-    title_status = html.Span('Excitement 🌈', style={'color': easy, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Feeling good",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': easy}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
@@ -354,17 +384,19 @@ def update_visuals(selected_km):
   elif selected_km == 6:
 
     # Title
-    title_status = html.Span('Still excited 🚀', style={'color': easy, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Feeling good",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': easy}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
-    The race was packed which has its pros and cons. On one hand,
-    you feel motivated because of the other runners. On the other,
-    you often have to be creative when you want to speed up and
-    therefore need to somehow pass the border of runners in front of
-    you. In addition, I also ran faster than I initially planned.
+    The race was packed which has its pros and cons. The
+    biggest pro is the motivation that you get from running
+    next to other runners.In addition, I also ran faster than I initially planned.
     I planned to run around 5.30 min/km but I sped up to
     """
     text2 = html.Span('5.10 min/km', style={'color': '#636efa', 'font-weight': 'bold'})
@@ -384,7 +416,11 @@ def update_visuals(selected_km):
   elif selected_km == 12:
 
     # Title
-    title_status = html.Span('Too fast...🌪', style={'color': easy, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Feeling good",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': easy}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
@@ -407,7 +443,11 @@ def update_visuals(selected_km):
   elif selected_km == 18:
 
     # Title
-    title_status = html.Span('Stable pace at 5... 🔋', style={'color': easy, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Feeling good",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': easy}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
@@ -432,7 +472,11 @@ def update_visuals(selected_km):
   elif selected_km == 24:
 
     # Title
-    title_status = html.Span('Even faster... ⚡️', style={'color': easy, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Feeling good",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': easy}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
@@ -458,7 +502,11 @@ def update_visuals(selected_km):
 
   elif selected_km == 30:
     # Title
-    title_status = html.Span('Things start to hurt... 🚒', style={'color': middle, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Can barely talk",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': middle}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     
@@ -479,10 +527,14 @@ def update_visuals(selected_km):
   elif selected_km == 36:
 
     # Title
-    title_status = html.Span('Decline... 📉', style={'color': middle, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Can barely talk",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': middle}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
-    
+
     # Detail
     text1 = """
     Many runners will tell you that 33rd km is the most critical. For me at this
@@ -499,7 +551,11 @@ def update_visuals(selected_km):
   elif selected_km == 42:
 
     # Title
-    title_status = html.Span('Finally end... 🎉', style={'color': hard, 'font-weight': 'bold'})
+    title_status = html.Span(
+        "Hurting",
+        className="badge responsive-badges2 me-2 text-muted",
+        style={'background-color': hard}
+    )
     title = html.Div([f'Status after {selected_km} km: ', title_status],
             style={'text-align': 'center'}, className=title_style)
     

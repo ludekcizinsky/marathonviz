@@ -37,7 +37,7 @@ font_url = 'https://fonts.googleapis.com/css2?family=Poppins&display=swap'
 app = Dash(
     __name__,
     suppress_callback_exceptions=True,
-    external_stylesheets=[dbc.icons.FONT_AWESOME, font_url]
+    external_stylesheets=[dbc.icons.FONT_AWESOME, font_url, dbc.icons.BOOTSTRAP]
     )
 server = app.server
 app.css.config.serve_locally = True
