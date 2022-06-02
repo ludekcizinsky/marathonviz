@@ -25,20 +25,24 @@ header = dbc.Row(
       dcc.Location(id='url', refresh=False),
       html.Hr(style={'color': '#575655', 'height': '2px'})
     ],
-    className="h-10"
+    className="h-10",
+    align='center'
 )
 
 # Content
 content = dbc.Container(id='page-content', className='h-90')
 
 # Dash App
+font_url = 'https://fonts.googleapis.com/css2?family=Poppins&display=swap'
 app = Dash(
     __name__,
     suppress_callback_exceptions=True,
-    external_stylesheets=[dbc.icons.FONT_AWESOME]
+    external_stylesheets=[dbc.icons.FONT_AWESOME, font_url]
     )
 server = app.server
+app.css.config.serve_locally = True
 app.layout = dbc.Container([header, content], className="vh-100", fluid=True)
+
 
 
 # Redirect to correct pages

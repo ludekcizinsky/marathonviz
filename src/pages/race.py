@@ -75,7 +75,7 @@ instructions = dbc.Row(
     [
     dbc.Col(
       html.Div("Use the slider below to navigate through the whole marathon experience."),
-      width=12, className='h-100 text-light', style={'text-align': 'center'})
+      width=12, className='h-100 text-light slider-desc', style={'text-align': 'center'})
     ],
     className='h-10 pb-2',
     justify='center'
@@ -330,13 +330,14 @@ def update_visuals(selected_km):
   hb_fig.add_trace(hb)
 
   # Description
-  desc = html.Div('Undefined', style={'text-align': 'center'})
+  detail_style = 'fw-normal lh-large responsive-text'
+  title_style = 'fw-bold fs-5'
   if selected_km == 0: 
 
     # Title
     title_status = html.Span('Excitement 🌈', style={'color': easy, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text = """
@@ -347,7 +348,7 @@ def update_visuals(selected_km):
     to tackle the race. My initial plan is to start at a pace around five
     minutes and 30s per kilometer.
     """
-    detail = html.Div(text, style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div(text, style={'text-align': 'justify'}, className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 6:
@@ -355,7 +356,7 @@ def update_visuals(selected_km):
     # Title
     title_status = html.Span('Still excited 🚀', style={'color': easy, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -377,7 +378,7 @@ def update_visuals(selected_km):
     """
     detail = html.Div([text1, text2, text3, text4, text5],
                       style={'text-align': 'justify'},
-                      className='fw-normal lh-large')
+                      className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 12:
@@ -385,7 +386,7 @@ def update_visuals(selected_km):
     # Title
     title_status = html.Span('Too fast...🌪', style={'color': easy, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -399,7 +400,8 @@ def update_visuals(selected_km):
     towards the end.
     """
 
-    detail = html.Div([text1, text2, text3], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1, text2, text3], style={'text-align': 'justify'},
+        className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 18:
@@ -407,7 +409,7 @@ def update_visuals(selected_km):
     # Title
     title_status = html.Span('Stable pace at 5... 🔋', style={'color': easy, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -423,7 +425,8 @@ def update_visuals(selected_km):
     was a bad idea and I should have just carried the gels with me.
     """
 
-    detail = html.Div([text1, text2, text3], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1, text2, text3], style={'text-align': 'justify'},
+        className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 24:
@@ -431,7 +434,7 @@ def update_visuals(selected_km):
     # Title
     title_status = html.Span('Even faster... ⚡️', style={'color': easy, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -449,14 +452,15 @@ def update_visuals(selected_km):
     . Although I knew all of this I kept going at this pace.
     """
 
-    detail = html.Div([text1, text2, text3, text4, text5], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1, text2, text3, text4, text5], style={'text-align':
+      'justify'}, className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 30:
     # Title
     title_status = html.Span('Things start to hurt... 🚒', style={'color': middle, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -468,15 +472,16 @@ def update_visuals(selected_km):
     point: next time run at least 33 km as part of the training.
     """
     
-    detail = html.Div([text1], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1], style={'text-align': 'justify'},
+        className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 36:
 
     # Title
-    title_status = html.Span('Decline... 📉', style={'color': hard, 'font-weight': 'bold'})
+    title_status = html.Span('Decline... 📉', style={'color': middle, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -487,7 +492,8 @@ def update_visuals(selected_km):
     I will start suffering more and more towards the end.
     """
 
-    detail = html.Div([text1], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1], style={'text-align': 'justify'},
+        className=detail_style)
     desc = html.Div([title, detail])
 
   elif selected_km == 42:
@@ -495,7 +501,7 @@ def update_visuals(selected_km):
     # Title
     title_status = html.Span('Finally end... 🎉', style={'color': hard, 'font-weight': 'bold'})
     title = html.Div([f'Status after {selected_km} km: ', title_status],
-            style={'text-align': 'center'}, className='fw-bold fs-5')
+            style={'text-align': 'center'}, className=title_style)
     
     # Detail
     text1 = """
@@ -507,7 +513,8 @@ def update_visuals(selected_km):
     finish. I finished in 3 hours, 34 minutes and 48 seconds.
     """
 
-    detail = html.Div([text1], style={'text-align': 'justify'}, className='fw-normal lh-large')
+    detail = html.Div([text1], style={'text-align': 'justify'},
+        className=detail_style)
     desc = html.Div([title, detail])
 
   

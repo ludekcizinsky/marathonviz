@@ -1,9 +1,7 @@
 from dash import dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 
-
-img_style={"max-height": "250px", 'width': '100px'}
-
+# Intro
 text = dbc.Col(dcc.Markdown(
     '''
     ## Welcome
@@ -11,25 +9,17 @@ text = dbc.Col(dcc.Markdown(
     it is like to run a marathon. Whether you are an experienced runner or just
     beginner, I hope this visualization gives you some interesting insights as
     well as motivates you in your running efforts. Enjoy the [Marathon
-    race](/race)!
-
-    ## Photos
-    To be added.
+    race!](/race)
     '''
 ), className='h-100', width=12)
+intro = dbc.Row(text, className='h-20 text-light mb-2 text-wrap responsive-text')
 
-carousel = dbc.Col(dbc.Carousel(
-    items=[
-        {"key": "1", "src": "/assets/images/1.jpg", "img_style": img_style},
-        {"key": "2", "src": "/assets/images/2.jpg", "img_style": img_style}
-    ],
-    controls=True,
-    indicators=True,
-    className='h-100'
-), className='h-100', width=12)
+# Photo
+img_style={"max-height": "250px", "max-width": 'auto'}
 
-intro = dbc.Row(text, className='h-25 text-light')
-photos = dbc.Row([carousel], className='h-75', justify="center")
+photo = dbc.Col(html.Img(src="/assets/images/3.jpeg", className='h-100 rounded mx-auto d-block img-fluid'),
+        className='h-100', width=12)
+photo_row = dbc.Row([photo], className='h-60', align="center")
 
-layout = dbc.Container([intro], className="h-100")
+layout = dbc.Container([intro, photo_row], className="h-100")
 

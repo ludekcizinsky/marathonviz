@@ -1,7 +1,29 @@
-.custom-img {
-    height: auto; 
-    width: auto; 
-    max-height: 500px;
+.responsive-text {
+}
+
+.slider-desc{
+
+}
+
+@media screen and (min-height: 769px) {
+  .responsive-text {
+    font-size: large;
+  }
+
+  .slider-desc{
+    font-size: medium;
+  }
+}
+
+@media screen and (max-height: 768px) {
+  .responsive-text {
+    font-size: small;
+  }
+
+  .slider-desc{
+    font-size: 11.5px;
+  }
+
 }
 
 .rc-slider-track {
