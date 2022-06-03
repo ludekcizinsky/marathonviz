@@ -558,12 +558,12 @@ def update_visuals(selected_km):
     next to the other runners. This also led me to ran faster than I initially
     planned. (5.30 min/km) I sped up to
     """
-    text2 = html.Span('5.10 min/km', style={'color': '#636efa', 'font-weight': 'bold'})
+    text2 = html.Span('5.10 min/km', style={'color': primary, 'font-weight': 'bold'})
     
     text3 = """
     , yet, my heartrate was about
     """
-    text4 = html.Span('150 BPM', style={'color': '#636efa', 'font-weight': 'bold'})
+    text4 = html.Span('150 BPM', style={'color': primary, 'font-weight': 'bold'})
     text5 = """
     which means I could have a comfortable conversation.
     """
