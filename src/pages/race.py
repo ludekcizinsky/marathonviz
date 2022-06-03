@@ -18,13 +18,13 @@ config={'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'toImage',
                                   'zoom2d', 'select2d','autoScale2d']}
 
 # Colors for statuses
-easy = '#48e090'
-middle = '#fce26c'
-hard = '#f67c7c'
+easy = '#319e73'
+middle = '#f0e441'
+hard = '#d55e00'
 umark = '#999999'
 
 # Main colors
-primary = '#636efa'
+primary = '#2572b2'
 
 
 # --------- Define initial figures
@@ -40,7 +40,8 @@ pace = go.Scatter(
     y = merged['time [s]'],
     mode='lines+markers',
     showlegend=False,
-    name='Actual pace'
+    name='Actual pace',
+    line=dict(color=primary)
 )
 
 # Target pace
@@ -59,7 +60,8 @@ hb = go.Scatter(
     y = merged['average_heartrate'],
     mode='lines+markers',
     showlegend=False,
-    name='Actual heartbeat'
+    name='Actual heartbeat',
+    line=dict(color=primary)
 )
 
 # Map
@@ -68,7 +70,8 @@ track = go.Scattermapbox(
       lon = df['Lon'].tolist(),
       lat = df['Lat'].tolist(),
       hoverinfo='none',
-      showlegend=False
+      showlegend=False,
+      line=dict(color=primary)
 )
 
 
@@ -201,7 +204,7 @@ layout = dbc.Container([row1, row2], className="h-90")
 def update_visuals(selected_km):
 
   # Global vars
-  section_bg = '#141515'
+  section_bg = '#171717'
   
   # Overall progress
   final_color = None
@@ -327,9 +330,9 @@ def update_visuals(selected_km):
     yaxis_tickformat = '%M:%S'
   )
   pace_fig.add_vrect(x0=0, x1=selected_km, annotation_text='',
-                fillcolor="#636efa", opacity=0.25, line_width=0)
+                fillcolor=primary, opacity=0.25, line_width=0)
   pace_fig.add_vrect(x0=selected_km-6, x1=selected_km, annotation_text='',
-                fillcolor="#636efa", opacity=0.25, line_width=0)
+                fillcolor=primary, opacity=0.25, line_width=0)
   pace_fig.add_trace(pace)
   pace_fig.add_trace(target_pace)
   pace_fig.add_annotation(x=20, y=target['time [s]'].iloc[17],
@@ -426,10 +429,10 @@ def update_visuals(selected_km):
     
   )
   hb_fig.add_vrect(x0=0, x1=selected_km, annotation_text='',
-                fillcolor="#636efa", opacity=0.25, line_width=0,
+                fillcolor=primary, opacity=0.25, line_width=0,
                 )
   hb_fig.add_vrect(x0=selected_km-6, x1=selected_km, annotation_text='',
-                fillcolor="#636efa", opacity=0.25, line_width=0,
+                fillcolor=primary, opacity=0.25, line_width=0,
                 )
   hb_fig.add_trace(hb)
 
