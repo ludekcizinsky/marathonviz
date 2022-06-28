@@ -132,8 +132,8 @@ dmypy.json
 src/data/raw/activities_detail/*.json
 src/data/raw/activities_zones/*.json
 src/data/raw/activities_list/*.json
-src/data/processed/*.csv
-src/data/processed/*.json
+#src/data/processed/*.csv
+#src/data/processed/*.json
 
 
 # Config file

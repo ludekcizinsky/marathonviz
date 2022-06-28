@@ -21,7 +21,7 @@ cd src
 python cli.py -FT
 ```
 
-For details, check the pipeline [file](src/utils_strava_api.py).
+For details, check the pipeline [file](src/utils/strava_api.py).
 
 #### Processing the Strava data
 In the preprocessing part, I have two main things:
