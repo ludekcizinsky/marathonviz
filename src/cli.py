@@ -17,7 +17,7 @@ parser.add_argument(
     '-FT',
     '--fetch',
     action='store_true',
-    help='Fetch data from strava api.'
+    help='Fetch marathon data from strava api.'
 )
 
 
@@ -27,6 +27,10 @@ def main():
 
   if args.preprocess:
     preprocess_marathon()
+  elif args.fetch:
+    fetch_marathon_data()
+  else:
+    raise ValueError(f'Unknown command provided.')
 
 if __name__ == '__main__':
   main()

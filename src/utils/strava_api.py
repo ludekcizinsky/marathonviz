@@ -1,9 +1,21 @@
+# External libraries
 import requests
 import urllib3
+from tqdm import tqdm
+
+# Limit warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-from .config import CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN
+
+# Built in libraries
 from datetime import datetime
 import json
+from timeit import default_timer as timer
+
+# Custom
+from .output import working_on, finished
+
+# Secrets for API
+from .config import CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN
 
 def _get_access_token():
   """
@@ -73,14 +85,22 @@ def get_zones_info(activity_id):
 def fetch_marathon_data():
 
   # All marathon activities
+  start = timer()
+  working_on('Getting all activities related to marathon.')
+
   after = datetime.strptime('2022-02-27', '%Y-%m-%d').timestamp()
   before = datetime.strptime('2022-05-16', '%Y-%m-%d').timestamp()
   activities = list_activities(after, before)
   with open("data/raw/activities_list/marathon_runs_list.json", "w") as f:
     json.dump(activities, f)
 
+  finished('Getting all activities related to marathon.', timer() - start)
+
   # All activities details
-  for activity in activities:
+  start = timer()
+  working_on('Getting details for each marathon activity.')
+
+  for activity in tqdm(activities, desc='# of details fetched'):
     activity_id = activity['id']
 
     activity_detail = get_activity_info(activity_id)
@@ -90,4 +110,6 @@ def fetch_marathon_data():
     zone_info = get_zones_info(activity_id)
     with open(f"data/raw/activities_zones/{activity_id}.json", "w") as f:
       json.dump(zone_info, f)
+
+  finished('Getting details for each marathon activity.', timer() - start)
 
