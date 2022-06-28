@@ -32,7 +32,7 @@ In the preprocessing part, I have two main things:
 2. For each km, I estimated its coordinates and then added this to the each km
    detail. (see the [result](src/data/processed/ithkm.csv))
 
-These two tasks were embedded into a simple [pipeline](src/util/preprocessing.py) which can be called through `CLI`:
+These two tasks were embedded into a simple [pipeline](src/utils/preprocessing.py) which can be called through `CLI`:
 
 ```
 cd src
