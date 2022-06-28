@@ -2,6 +2,8 @@
 **Marathonviz** is my effort to communicate my experience of running marathon
 through an interactive data visualization.
 
+![marathonviz](src/assets/images/marathonviz.png)
+
 ## Journey to marathonviz
 ### Data
 #### Connecting to Strava API
@@ -39,6 +41,6 @@ cd src
 python cli.py -PRE
 ```
 
-## Resources
-- [deploy dash on digital ocean](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)
+### Visualization
+I explain my main visualization choices in [the presentation](https://docs.google.com/presentation/d/1E3R6Nys0IiegZCQ_d7zTT1UQQXSPCm9kwWC9CsgxLC8/edit?usp=sharing) (See comments for each slide) as well as in the [report](report.pdf). To make things happen, I used [plotly and dash](https://plotly.com/). I deployed the `Dash web app` using [digital ocean](https://www.digitalocean.com/) - see this [turorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04) for detail.
 

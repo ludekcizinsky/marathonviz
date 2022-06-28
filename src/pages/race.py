@@ -7,10 +7,9 @@ px.set_mapbox_access_token(MAPBOX_TOKEN)
 import pandas as pd
 
 # -------- Load data
-df = pd.read_csv('data/processed/df.csv')
-reduced_df = pd.read_csv('data/processed/reduced_df.csv')
-merged = pd.read_csv('data/processed/merged.csv')
-target = pd.read_csv('data/processed/run_plan.csv')
+coordinates = pd.read_csv('data/processed/coordinates.csv')
+ithkm = pd.read_csv('data/processed/ithkm.csv')
+planned_pace = pd.read_csv('data/raw/personal_plans/run_plan.csv')
 
 
 # -------  Config for all charts
@@ -21,33 +20,33 @@ config={'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'toImage',
 easy = '#319e73'
 middle = '#f0e441'
 hard = '#d55e00'
-umark = '#999999'
+umark = '#999999' # slider mark
 
 # Main colors
 primary = '#2572b2'
 
 
 # --------- Define initial figures
-merged['time [s]'] = pd.to_timedelta(merged['elapsed_time'], unit='s')
-merged['time [s]'] = merged['time [s]'] + pd.to_datetime('1970/01/01')
+ithkm['time [s]'] = pd.to_timedelta(ithkm['elapsed_time'], unit='s')
+ithkm['time [s]'] = ithkm['time [s]'] + pd.to_datetime('1970/01/01')
 
-target['time [s]'] = pd.to_timedelta(target['time [s]'], unit='s')
-target['time [s]'] = target['time [s]'] + pd.to_datetime('1970/01/01')
+planned_pace['time [s]'] = pd.to_timedelta(planned_pace['time [s]'], unit='s')
+planned_pace['time [s]'] = planned_pace['time [s]'] + pd.to_datetime('1970/01/01')
 
 # Pace
 pace = go.Scatter(
-    x = merged['Exact Distance'],
-    y = merged['time [s]'],
+    x = ithkm['Exact Distance'],
+    y = ithkm['time [s]'],
     mode='lines+markers',
     showlegend=False,
     name='Actual pace',
     line=dict(color=primary)
 )
 
-# Target pace
-target_pace = go.Scatter(
-  x = target['km'],
-  y = target['time [s]'],
+# planned_pace pace
+planned_pace_pace = go.Scatter(
+  x = planned_pace['km'],
+  y = planned_pace['time [s]'],
   mode='lines',
   showlegend=False,
   line=dict(color='#5c5b5b'),
@@ -56,8 +55,8 @@ target_pace = go.Scatter(
 
 # Heartbeat
 hb = go.Scatter(
-    x = merged['Exact Distance'],
-    y = merged['average_heartrate'],
+    x = ithkm['Exact Distance'],
+    y = ithkm['average_heartrate'],
     mode='lines+markers',
     showlegend=False,
     name='Actual heartbeat',
@@ -67,8 +66,8 @@ hb = go.Scatter(
 # Map
 track = go.Scattermapbox(
       mode = 'lines',
-      lon = df['Lon'].tolist(),
-      lat = df['Lat'].tolist(),
+      lon = coordinates['Lon'].tolist(),
+      lat = coordinates['Lat'].tolist(),
       hoverinfo='none',
       showlegend=False,
       line=dict(color=primary)
@@ -211,11 +210,11 @@ def update_visuals(selected_km):
 
   if selected_km <= 24:
 
-    filtered_df = df[df['distance [m]'] <= selected_km*1000]
+    filtered_coordinates = coordinates[coordinates['distance [m]'] <= selected_km*1000]
     t1 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=easy, width=2)
@@ -226,21 +225,21 @@ def update_visuals(selected_km):
 
   elif selected_km <= 36:
 
-    filtered_df = df[df['distance [m]'] <= 24*1000]
+    filtered_coordinates = coordinates[coordinates['distance [m]'] <= 24*1000]
     t1 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=easy, width=2)
     )
 
-    filtered_df = df[(df['distance [m]'] > 24*1000) & (df['distance [m]'] <= selected_km*1000)]
+    filtered_coordinates = coordinates[(coordinates['distance [m]'] > 24*1000) & (coordinates['distance [m]'] <= selected_km*1000)]
     t2 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=middle, width=2)
@@ -251,31 +250,31 @@ def update_visuals(selected_km):
 
   else:
 
-    filtered_df = df[df['distance [m]'] <= 24*1000]
+    filtered_coordinates = coordinates[coordinates['distance [m]'] <= 24*1000]
     t1 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=easy, width=2)
     )
 
-    filtered_df = df[(df['distance [m]'] > 24*1000) & (df['distance [m]'] <= 36*1000)]
+    filtered_coordinates = coordinates[(coordinates['distance [m]'] > 24*1000) & (coordinates['distance [m]'] <= 36*1000)]
     t2 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=middle, width=2)
     )
 
-    filtered_df = df[(df['distance [m]'] > 36*1000)]
+    filtered_coordinates = coordinates[(coordinates['distance [m]'] > 36*1000)]
     t3 = go.Scattermapbox(
       mode = "lines",
-      lon = filtered_df['Lon'].tolist(),
-      lat = filtered_df['Lat'].tolist(), 
+      lon = filtered_coordinates['Lon'].tolist(),
+      lat = filtered_coordinates['Lat'].tolist(), 
       showlegend=False,
       hoverinfo='none',
       line=dict(color=hard, width=2)
@@ -287,8 +286,8 @@ def update_visuals(selected_km):
   # Particular position
   runner_position = go.Scattermapbox(
       mode = "markers",
-      lon = [filtered_df['Lon'].tolist()[-1]],
-      lat = [filtered_df['Lat'].tolist()[-1]],
+      lon = [filtered_coordinates['Lon'].tolist()[-1]],
+      lat = [filtered_coordinates['Lat'].tolist()[-1]],
       text = [selected_km],
       marker=dict(
               color=final_color,
@@ -334,8 +333,8 @@ def update_visuals(selected_km):
   pace_fig.add_vrect(x0=selected_km-6, x1=selected_km, annotation_text='',
                 fillcolor=primary, opacity=0.25, line_width=0)
   pace_fig.add_trace(pace)
-  pace_fig.add_trace(target_pace)
-  pace_fig.add_annotation(x=20, y=target['time [s]'].iloc[17],
+  pace_fig.add_trace(planned_pace_pace)
+  pace_fig.add_annotation(x=20, y=planned_pace['time [s]'].iloc[17],
             text="Planned pace",
             showarrow=False,
             yshift=-12,
@@ -343,10 +342,10 @@ def update_visuals(selected_km):
             )
 
   if selected_km <= 24:
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -356,10 +355,10 @@ def update_visuals(selected_km):
 
   elif selected_km <= 36 and selected_km > 24:
 
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -367,10 +366,10 @@ def update_visuals(selected_km):
     )
     pace_fig.add_trace(p24)
 
-    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    mask = (ithkm['Exact Distance'] <= selected_km) & (ithkm['Exact Distance'] >= 24)
     p36 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -380,10 +379,10 @@ def update_visuals(selected_km):
 
   else:
 
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -391,10 +390,10 @@ def update_visuals(selected_km):
     )
     pace_fig.add_trace(p24)
 
-    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    mask = (ithkm['Exact Distance'] <= selected_km) & (ithkm['Exact Distance'] >= 24)
     p36 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -402,10 +401,10 @@ def update_visuals(selected_km):
     )
     pace_fig.add_trace(p36)
 
-    mask = (merged['Exact Distance'] >= 36)
+    mask = (ithkm['Exact Distance'] >= 36)
     p42 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['time [s]'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['time [s]'],
         mode='lines+markers',
         showlegend=False,
         name='Actual pace',
@@ -445,10 +444,10 @@ def update_visuals(selected_km):
             )
 
   if selected_km <= 24:
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual heartbeat',
@@ -458,10 +457,10 @@ def update_visuals(selected_km):
 
   elif selected_km <= 36 and selected_km > 24:
 
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual heartbeat',
@@ -469,10 +468,10 @@ def update_visuals(selected_km):
     )
     hb_fig.add_trace(p24)
 
-    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    mask = (ithkm['Exact Distance'] <= selected_km) & (ithkm['Exact Distance'] >= 24)
     p36 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual heartbeat',
@@ -482,10 +481,10 @@ def update_visuals(selected_km):
 
   else:
 
-    mask = merged['Exact Distance'] <= selected_km
+    mask = ithkm['Exact Distance'] <= selected_km
     p24 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual heartbeat',
@@ -493,10 +492,10 @@ def update_visuals(selected_km):
     )
     hb_fig.add_trace(p24)
 
-    mask = (merged['Exact Distance'] <= selected_km) & (merged['Exact Distance'] >= 24)
+    mask = (ithkm['Exact Distance'] <= selected_km) & (ithkm['Exact Distance'] >= 24)
     p36 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual heartbeat',
@@ -504,10 +503,10 @@ def update_visuals(selected_km):
     )
     hb_fig.add_trace(p36)
 
-    mask = (merged['Exact Distance'] >= 36)
+    mask = (ithkm['Exact Distance'] >= 36)
     p42 = go.Scatter(
-        x = merged[mask]['Exact Distance'],
-        y = merged[mask]['average_heartrate'],
+        x = ithkm[mask]['Exact Distance'],
+        y = ithkm[mask]['average_heartrate'],
         mode='lines+markers',
         showlegend=False,
         name='Actual hearbeat',

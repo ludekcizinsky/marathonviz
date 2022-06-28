@@ -30,7 +30,7 @@ intro = dbc.Row([text], className='h-25 text-light responsive-text mb-4')
 # Photo
 img_style={"max-height": "50vh", "max-width": 'auto'}
 
-photo = dbc.Col(html.Img(src="/assets/images/3.jpeg", className='h-100 rounded mx-auto d-block',
+photo = dbc.Col(html.Img(src="/assets/images/cover.jpeg", className='h-100 rounded mx-auto d-block',
                 style=img_style),
         className='h-100', width=12)
 photo_row = dbc.Row([photo], className='h-75', align="center")
